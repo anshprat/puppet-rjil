@@ -14,14 +14,14 @@ rv=$?
 debug_prompt='[RJIL|DEBUG]'
 
 log_debug() {
-echo "$debug_prompt - $@ - ${FUNCNAME[ 1 ]}"|logger
+echo "$@ - called from - ${FUNCNAME[ 1 ]}"|logger -t $debug_prompt
 }
 
 run_puppet() {
         # ensure that our service catalog hiera data is available
         # now run puppet
         local_config_version=`python -m jiocloud.orchestrate current_version`
-        config_version="${1}  ${local_config_version}"
+        config_version="${1}  ${local_config_version} `date`"
         log_debug 'START' "${config_version}"
         puppet apply --config_version="echo ${config_version}" --detailed-exitcodes --logdest=syslog `puppet config print default_manifest`
         # publish the results of that run
@@ -54,8 +54,8 @@ if [ $rv -eq 0 ]
 then
        pending_version=$(python -m jiocloud.orchestrate current_version)
        echo current_version=$pending_version > /etc/facter/facts.d/current_version.txt
-       log_debug "Present version `python -m jiocloud.orchestrate current_version`"
-       log_debug "Local version `python -m jiocloud.orchestrate local_version`"
+       log_debug "current_version `python -m jiocloud.orchestrate current_version`"
+       log_debug "local_version `python -m jiocloud.orchestrate local_version`"
        # Update apt sources to point to new snapshot version
        (echo 'File<| title == "/etc/consul" |> { purge => false }'; echo 'File<| title == "sources.list.d" |> { purge => false }'; echo 'include rjil::system::apt' ) | puppet apply --logdest=syslog --config_version='python -m jiocloud.orchestrate current_version'
 
