@@ -55,7 +55,7 @@ class rjil::jiocloud (
     group  => 'root'
   }
   cron { 'maybe-upgrade':
-    command => 'run-one /usr/local/bin/maybe-upgrade.sh 2>&1 | logger',
+    command => 'run-one /usr/local/bin/maybe-upgrade.sh 2>&1 | logger -t puppet-rjil',
     user    => 'root',
     require => Package['run-one'],
   }

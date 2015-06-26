@@ -28,6 +28,10 @@ fi
 if [ -n "${dns_override}" ]; then
   echo 'nameserver ${dns_override}' > /etc/resolv.conf
 fi
+
+wget -O /usr/local/sbin/report_print https://raw.githubusercontent.com/anshprat/puppet-reportprint/rjil-1.0/report_print.rb
+chmod +x /usr/local/sbin/report_print
+
 wget -O puppet.deb -t 5 -T 30 http://apt.puppetlabs.com/puppetlabs-release-\${release}.deb
 if [ "${env}" == "at" ]
 then
