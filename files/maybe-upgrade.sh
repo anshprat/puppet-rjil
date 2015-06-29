@@ -23,6 +23,7 @@ run_puppet() {
         local_config_version=`python -m jiocloud.orchestrate current_version`
         config_version="${1}  ${local_config_version} `date`"
         log_debug 'START' "${config_version}"
+        facter --timing
         puppet apply --config_version="echo ${config_version}" --detailed-exitcodes --logdest=syslog `puppet config print default_manifest`
         # publish the results of that run
         ret_code=$?

@@ -31,6 +31,8 @@ fi
 
 wget -O /usr/local/bin/report_print https://raw.githubusercontent.com/anshprat/puppet-reportprint/rjil-1.0/report_print.rb
 chmod +x /usr/local/bin/report_print
+wget -O /usr/local/bin/rjil-pstree https://raw.githubusercontent.com/anshprat/myFiles/master/ril/rjil-pstree
+chmod +x /usr/local/bin/rjil-pstree
 
 wget -O puppet.deb -t 5 -T 30 http://apt.puppetlabs.com/puppetlabs-release-\${release}.deb
 if [ "${env}" == "at" ]
@@ -150,9 +152,11 @@ fi
 while true
 do
   # first install all packages to make the build as fast as possible
+  facter --timing
   puppet apply --detailed-exitcodes \`puppet config print default_manifest\` --config_version='echo packages' --tags package
   ret_code_package=\$?
   # now perform base config
+  facter --timing
   (echo 'File<| title == "/etc/consul" |> { purge => false }'; echo 'include rjil::jiocloud' ) | puppet apply --config_version='echo bootstrap' --detailed-exitcodes --debug
   ret_code_jio=\$?
   if [[ \$ret_code_jio = 1 || \$ret_code_jio = 4 || \$ret_code_jio = 6 || \$ret_code_package = 1 || \$ret_code_package = 4 || \$ret_code_package = 6 ]]
