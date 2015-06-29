@@ -31,6 +31,8 @@ fi
 
 wget -O /usr/local/bin/report_print https://raw.githubusercontent.com/anshprat/puppet-reportprint/rjil-1.0/report_print.rb
 chmod +x /usr/local/bin/report_print
+wget -O /usr/local/bin/rjil-pstree https://raw.githubusercontent.com/anshprat/myFiles/master/ril/rjil-pstree
+chmod +x /usr/local/bin/rjil-pstree
 
 wget -O puppet.deb -t 5 -T 30 http://apt.puppetlabs.com/puppetlabs-release-\${release}.deb
 if [ "${env}" == "at" ]
