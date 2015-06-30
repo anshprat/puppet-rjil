@@ -23,8 +23,8 @@ run_puppet() {
         local_config_version=`python -m jiocloud.orchestrate current_version`
         config_version="${1}  ${local_config_version} `date`"
         log_debug 'START' "${config_version}"
-        facter --timing
-        puppet apply --config_version="echo ${config_version}" --detailed-exitcodes --logdest=syslog `puppet config print default_manifest`
+        time facter --timing
+        time puppet apply --config_version="echo ${config_version}" --detailed-exitcodes --logdest=syslog `puppet config print default_manifest`
         # publish the results of that run
         ret_code=$?
         log_debug 'END' "${config_version}"
@@ -59,9 +59,10 @@ then
        log_debug "local_version `python -m jiocloud.orchestrate local_version`"
        # Update apt sources to point to new snapshot version
        (echo 'File<| title == "/etc/consul" |> { purge => false }'; echo 'File<| title == "sources.list.d" |> { purge => false }'; echo 'include rjil::system::apt' ) | puppet apply --logdest=syslog --config_version='python -m jiocloud.orchestrate current_version'
-       apt-get update
-       apt-get dist-upgrade -o Dpkg::Options::="--force-confold" -y
-       run_puppet 'Processing update'
+
+       time apt-get update
+       time apt-get dist-upgrade -o Dpkg::Options::="--force-confold" -y
+       time run_puppet 'Processing update'
 elif [ $rv -eq 1 ]
 then
        :
@@ -80,6 +81,10 @@ if [ $rv -ne 0 ]
 then
   # if we are failing, run puppet to see if it fixes itself
   time run_puppet "Validation failure ${failed_validation}"
+<<<<<<< HEAD
+=======
+  time consul reload
+>>>>>>> adding time to everything
 fi
 time validate_service
 time python -m jiocloud.orchestrate local_version $pending_version
