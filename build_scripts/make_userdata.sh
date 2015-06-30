@@ -64,7 +64,7 @@ if [ -n "${python_jiocloud_source_repo}" ]; then
 fi
 if [ -n "${puppet_modules_source_repo}" ]; then
   apt-get install -y git
-  git clone ${puppet_modules_source_repo} /tmp/rjil
+  time git clone ${puppet_modules_source_repo} /tmp/rjil
   if [ -n "${puppet_modules_source_branch}" ]; then
     pushd /tmp/rjil
     git checkout ${puppet_modules_source_branch}
@@ -102,7 +102,7 @@ if [ -n "${puppet_modules_source_repo}" ]; then
   ini_setting { disable_per_environment_manifest: path => "/etc/puppet/puppet.conf", section => main, setting => disable_per_environment_manifest, value => "true" }
 INISETTING
 else
-  puppet apply --config_version='echo settings' -e "ini_setting { default_manifest: path => \"/etc/puppet/puppet.conf\", section => main, setting => default_manifest, value => \"/etc/puppet/manifests/site.pp\" }"
+  time puppet apply --config_version='echo settings' -e "ini_setting { default_manifest: path => \"/etc/puppet/puppet.conf\", section => main, setting => default_manifest, value => \"/etc/puppet/manifests/site.pp\" }"
 fi
 echo 'consul_discovery_token='${consul_discovery_token} > /etc/facter/facts.d/consul.txt
 # default to first 16 bytes of discovery token
@@ -152,17 +152,17 @@ fi
 while true
 do
   # first install all packages to make the build as fast as possible
-  facter --timing
-  puppet apply --detailed-exitcodes \`puppet config print default_manifest\` --config_version='echo packages' --tags package
+  time facter --timing
+  time puppet apply --detailed-exitcodes \`puppet config print default_manifest\` --config_version='echo packages' --tags package
   ret_code_package=\$?
   # now perform base config
-  facter --timing
-  (echo 'File<| title == "/etc/consul" |> { purge => false }'; echo 'include rjil::jiocloud' ) | puppet apply --config_version='echo bootstrap' --detailed-exitcodes --debug
+  time facter --timing
+  (echo 'File<| title == "/etc/consul" |> { purge => false }'; echo 'include rjil::jiocloud' ) | time puppet apply --config_version='echo bootstrap' --detailed-exitcodes --debug
   ret_code_jio=\$?
   if [[ \$ret_code_jio = 1 || \$ret_code_jio = 4 || \$ret_code_jio = 6 || \$ret_code_package = 1 || \$ret_code_package = 4 || \$ret_code_package = 6 ]]
   then
-    echo "Puppet failed. Will retry in 5 seconds"
-    sleep 5
+    echo "Puppet failed. Retrying .."
+    #   sleep 5
   else
     break
   fi
