@@ -11,6 +11,7 @@ class rjil::system::apt (
   $proxy             = false,
   $repositories      = {},
   $override_repo     = $::override_repo,
+  $ign_languages     = true,
 ) {
 
   ## two settings to be overrided here in hiera
@@ -68,6 +69,29 @@ class rjil::system::apt (
     }
   } else {
     file { '/etc/apt/apt.conf.d/90proxy':
+      ensure => 'absent',
+      tag   => 'package',
+    }
+  }
+
+  if ($ign_languages) {
+    file { '/etc/apt/apt.conf.d/95no-translations':
+      content => "Acquire::Languages \"none\";",
+      owner => 'root',
+      group => 'root',
+      mode  => '0644',
+      tag   => 'package',
+    }
+    ##
+    # Cleanup i18n files in apt list from apt-update done before puppet
+    ##
+    exec { 'rm_i18n_apt_lists':
+        command => 'rm /var/lib/apt/lists/*i18n*',
+        path    => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin:/usr/local/sbin',
+        onlyif => 'ls /var/lib/apt/lists/*i18n*',
+    }
+  } else {
+    file { '/etc/apt/apt.conf.d/95no-translations':
       ensure => 'absent',
       tag   => 'package',
     }
