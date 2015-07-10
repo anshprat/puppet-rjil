@@ -81,10 +81,6 @@ if [ $rv -ne 0 ]
 then
   # if we are failing, run puppet to see if it fixes itself
   time run_puppet "Validation failure ${failed_validation}"
-<<<<<<< HEAD
-=======
-  time consul reload
->>>>>>> adding time to everything
 fi
 time validate_service
 time python -m jiocloud.orchestrate local_version $pending_version
