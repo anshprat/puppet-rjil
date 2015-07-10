@@ -83,7 +83,7 @@ then
 fi
 
 . venv/bin/activate
-
+pip install IPy python-novaclient pyyaml pyopenssl ndg-httpsclient pyasn1
 # this is here to allow a user to override the command used for
 # the timeout function just incase it happens to be gtimeout
 timeout=${timeout_command:-timeout}
