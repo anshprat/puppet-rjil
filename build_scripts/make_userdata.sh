@@ -28,12 +28,10 @@ fi
 if [ -n "${dns_override}" ]; then
   echo 'nameserver ${dns_override}' > /etc/resolv.conf
 fi
-
 wget -O /usr/local/bin/report_print https://raw.githubusercontent.com/anshprat/puppet-reportprint/rjil-1.0/report_print.rb
 chmod +x /usr/local/bin/report_print
 wget -O /usr/local/bin/rjil-pstree https://raw.githubusercontent.com/anshprat/myFiles/master/ril/rjil-pstree
 chmod +x /usr/local/bin/rjil-pstree
-
 wget -O puppet.deb -t 5 -T 30 http://apt.puppetlabs.com/puppetlabs-release-\${release}.deb
 if [ "${env}" == "at" ]
 then
@@ -42,6 +40,7 @@ else
   jiocloud_repo_deb_url=http://jiocloud.rustedhalo.com/ubuntu/jiocloud-apt-\${release}.deb
 fi
 wget -O jiocloud.deb -t 5 -T 30 \${jiocloud_repo_deb_url}
+dpkg -i puppet.deb jiocloud.deb
 dpkg -i puppet.deb jiocloud.deb
 if no_proxy= wget -t 2 -T 30 -O internal.deb http://apt.internal.jiocloud.com/internal.deb
 then
@@ -91,7 +90,7 @@ if [ -n "${puppet_modules_source_repo}" ]; then
   then
     cd /etc/puppet/modules.overrides
     time wget -O cache.tar.gz "${module_git_cache}"
-    tar xvzf cache.tar.gz
+    tar xzf cache.tar.gz
     time librarian-puppet update --puppetfile=/tmp/rjil/Puppetfile --path=/etc/puppet/modules.overrides
   else
     time librarian-puppet install --puppetfile=/tmp/rjil/Puppetfile --path=/etc/puppet/modules.overrides
@@ -110,10 +109,6 @@ echo 'consul_gossip_encrypt'=`echo ${consul_discovery_token} | cut -b 1-15 | bas
 echo 'current_version='${BUILD_NUMBER} > /etc/facter/facts.d/current_version.txt
 echo 'env='${env} > /etc/facter/facts.d/env.txt
 echo 'cloud_provider='${cloud_provider} > /etc/facter/facts.d/cloud_provider.txt
-if [ -n "${slack_url}" ]; then
-  echo 'slack_url=${slack_url}' > /etc/facter/facts.d/slack_url.txt
-fi
-
 ##
 # Disable TCP Offloading in builds on Interfaces
 # Add network config for all available interfaces, this would be usable for
@@ -139,6 +134,9 @@ iface \$nic inet dhcp
 fi
 
 
+if [ -n "${slack_url}" ]; then
+  echo 'slack_url=${slack_url}' > /etc/facter/facts.d/slack_url.txt
+fi
 ##
 # Workaround to add the swap partition for baremetal systems, as even though
 # cloudinit is creating the swap partition, its not added to the fstab and not
@@ -149,14 +147,15 @@ if [ -e /dev/disk/by-label/swap1 ] && [ `grep -cP '^LABEL=swap1[\s\t]+' /etc/fst
   swapon -a
 fi
 
-date
-
 while true
 do
   # first install all packages to make the build as fast as possible
   time facter --timing
+  date
   time puppet apply --detailed-exitcodes \`puppet config print default_manifest\` --config_version='echo packages' --tags package
   ret_code_package=\$?
+  date
+  sleep 61
   # now perform base config
   time facter --timing
   (echo 'File<| title == "/etc/consul" |> { purge => false }'; echo 'include rjil::jiocloud' ) | time puppet apply --config_version='echo bootstrap' --detailed-exitcodes --debug
