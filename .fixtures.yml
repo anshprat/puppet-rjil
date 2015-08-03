@@ -148,3 +148,6 @@ fixtures:
     collectd:
       repo: https://github.com/pdxcat/puppet-module-collectd
       ref: v3.2.0
+    consulr:
+      repo: https://github.com/anshprat/puppet-consulr
+      ref: origin/manage_config
