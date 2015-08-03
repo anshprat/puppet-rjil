@@ -121,4 +121,6 @@ class rjil::ceph (
     sharedscripts => true,
     missingok     => true,
   }
+
+  class {'rjil::ceph::upgrade':}
 }
