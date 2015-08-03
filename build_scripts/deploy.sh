@@ -10,6 +10,8 @@ fi
 
 export consul_discovery_token
 
+ssh_options='-o LogLevel=ERROR -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+
 ##
 # overcast can run scripts independantly, so no need to run anything else.
 # overcast is not able to resolve the environment variables in case of remote
@@ -31,7 +33,7 @@ else
         nova list | grep test${BUILD_NUMBER} | cut -f2 -d' ' | while read uuid; do nova console-log $uuid | grep Giving.up.on.md && nova reboot $uuid || true; done
     fi
     function debug(){
-        bash -c "ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate debug_timeout ${BUILD_NUMBER};python -m jiocloud.apply_resources ssh_config --project_tag=${project_tag} ${mappings_arg} environment/${layout}.yaml > ${project_tag}_ssh_config;for i in \`python -m jiocloud.apply_resources list --project_tag=${project_tag} environment/${layout}.yaml \`; do ssh -o LogLevel=Error -F ${project_tag}_ssh_config \${i} \'hostname\' ;done"
+        bash -c "ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate debug_timeout ${BUILD_NUMBER};python -m jiocloud.apply_resources ssh_config --project_tag=${project_tag} ${mappings_arg} environment/${layout}.yaml > ${project_tag}_ssh_config;for i in \`python -m jiocloud.apply_resources list --project_tag=${project_tag} environment/${layout}.yaml \`; do ssh -o LogLevel=ERROR -F ${project_tag}_ssh_config \${i} \'hostname\' ;done"
     }
 
     trap "debug" EXIT
@@ -44,13 +46,13 @@ while [[ ! $ip ]] ; do
   sleep 2;
 done
 
-time $timeout ${ping_timeout:-1200} bash -c "while ! bash -c 'ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate ping'; do sleep 5; done"
-time $timeout 600 bash -c "while ! ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate trigger_update ${BUILD_NUMBER}; do sleep 5; done"
+time $timeout ${ping_timeout:-1200} bash -c "while ! bash -c 'ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate ping'; do sleep 30; done"
+time $timeout 600 bash -c "while ! ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate trigger_update ${BUILD_NUMBER}; do sleep 5; done"
 
 if [ "$stack" = 'undercloud' ]; then
-    time $timeout 4000 bash -c "while ! echo uc1-${project_tag} | ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER} ; do sleep 5; done"
+    time $timeout 4000 bash -c "while ! echo uc1-${project_tag} | ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER} ; do sleep 5; done"
 else
-    time $timeout 4000 bash -c "while ! python -m jiocloud.apply_resources list --project_tag=${project_tag} environment/${layout}.yaml | sed -e 's/_/-/g' | ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER} ; do sleep 5; done"
+    time $timeout 4000 bash -c "while ! python -m jiocloud.apply_resources list --project_tag=${project_tag} environment/${layout}.yaml | sed -e 's/_/-/g' | ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER}; do ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate hosts_at_version ${BUILD_NUMBER}; sleep 120; done"
 fi
-time $timeout 2400 bash -c "while ! ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate check_single_version -v ${BUILD_NUMBER} ; do sleep 5; done"
-time $timeout 600 bash -c "while ! ssh -o LogLevel=Error -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate get_failures --hosts; do sleep 5; done"
+time $timeout 2400 bash -c "while ! ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate check_single_version -v ${BUILD_NUMBER} ; do sleep 5; done"
+time $timeout 600 bash -c "while ! ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate get_failures --hosts; do sleep 5; done"
