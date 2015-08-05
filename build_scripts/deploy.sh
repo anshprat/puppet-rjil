@@ -52,7 +52,7 @@ time $timeout 600 bash -c "while ! ssh ${ssh_options} ${ssh_user:-jenkins}@${ip}
 if [ "$stack" = 'undercloud' ]; then
     time $timeout 4000 bash -c "while ! echo uc1-${project_tag} | ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER} ; do sleep 5; done"
 else
-    time $timeout 4000 bash -c "while ! python -m jiocloud.apply_resources list --project_tag=${project_tag} environment/${layout}.yaml | sed -e 's/_/-/g' | ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER}; do ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate hosts_at_version ${BUILD_NUMBER}; sleep 120; done"
+    time $timeout 4000 bash -c "while ! python -m jiocloud.apply_resources list --project_tag=${project_tag} environment/${layout}.yaml | sed -e 's/_/-/g' | ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate verify_hosts ${BUILD_NUMBER}; do echo -e '\nThe following hosts are ready:';ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate hosts_at_version ${BUILD_NUMBER}; sleep 120; done"
 fi
 time $timeout 2400 bash -c "while ! ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate check_single_version -v ${BUILD_NUMBER} ; do sleep 5; done"
 time $timeout 600 bash -c "while ! ssh ${ssh_options} ${ssh_user:-jenkins}@${ip} python -m jiocloud.orchestrate get_failures --hosts; do sleep 5; done"
