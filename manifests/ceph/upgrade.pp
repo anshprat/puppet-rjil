@@ -30,22 +30,14 @@ class rjil::ceph::upgrade (
           path   => '/etc/apt/sources.list.d/ceph.list',
           ensure => absent,
         }
-        apt_mirror::mirror { 'ceph_hammer_mirror':
-                mirror     => 'ceph.com',
-                os         => 'debian-hammer',
-                release    => ['trusty'],
-                components => ['main'],
-                source     => false,
-              }
        apt::source { 'ceph_hammer_repo':
-          comment       => 'ceph hammer repo',
-          location      => 'http://ceph.com/',
-          release       => 'debian-hammer',
-          repos         => 'main',
-          include_src   => 'false',
-          key           => {
-            'id'        => '17ED316D',
-            'server'    => 'keyserver.ubuntu.com',
+          comment  => 'ceph hammer repo',
+          location => 'http://ceph.com/',
+          release  => 'debian-hammer',
+          repos    => 'main',
+          key      => {
+            'id'     => '17ED316D',
+            'server' => 'keyserver.ubuntu.com',
           },
         }
         exec { "/usr/bin/apt-get -y upgrade":
