@@ -17,49 +17,45 @@ class rjil::ceph::upgrade (
               action => 'get',
               scope_param => $::hostname,
               })
-    ##
+  notify{$conslkv:}
+    ###########################################################
     # We have reached here, then it means puppet_enable is true, but never hurts to cross check.
-    ##
-
+    # prod upgrade code starts
+    # One more failsafe - ensure the upgrade date is for today
+    # First restart the mon on stmonleader
+    ###########################################################
   if ($consulkv['upgrade_component'] == 'ceph' and $consulkv['enable_upgrade'] == 'True' and $consulkv['enable_puppet'] == 'True'){
-    ##
-    # The below is not required for prod but is only for testing gates upgrade in gates
-    ##
-    if ($consulkv['gate_update_ceph_repo'] == 'True'){
-        file {'delete_ceph_giant_repo':
-          path   => '/etc/apt/sources.list.d/ceph.list',
-          ensure => absent,
-        }
-       apt::source { 'ceph_hammer_repo':
-          comment  => 'ceph hammer repo',
-          location => 'http://ceph.com/',
-          release  => 'debian-hammer',
-          repos    => 'main',
-          key      => {
-            'id'     => '17ED316D',
-            'server' => 'keyserver.ubuntu.com',
-          },
-        }
-        exec { "/usr/bin/apt-get -y upgrade":
-          refreshonly => true,
-          subscribe => File["/etc/apt/sources.list.d/ceph_hammer_repo.list"],
-          timeout => 3600,
-        }
-    }
+        $ceph_upgrade_date = $consulkv['ceph_upgrade_date']
+        $today = generate('/bin/date','+%F')
 
-        if (('stmonleader1' in $::hostname) and ($consulkv['mon_restart_done'] != 'True')){
-            file { "/tmp/mon_restart_lock.puppet":
-                notify  => Service["ceph-mon"],
+        ##
+        # Using in rather than == as $ today seems to have something extra like #12 in the end
+        #(/Stage[main]/Rjil::Ceph::Upgrade/Notify[Planned ceph upgrade is 2015-08-16 , today is 2015-08-16#012]/message) defined 'message' as 'Planned ceph upgrade is 2015-08-16 , today is 2015-08-16
+        ##
+
+        if( $ceph_upgrade_date in $today ){
+            if ((dns_resolve('stmonleader.service.consul') == $::ipaddress) and ($consulkv['mon_restart_done'] != 'True')){
+                file { '/tmp/mon_restart_lock.puppet':
+                    ensure  => exists,
+                    notify  => Service["ceph-mon.$::hostname"],
+                }
+                exec {'/bin/ls': #/path/to/mon/quorum/check
+                }
+                consul_kv {
+                        "config_state/host/$::hostname/mon_restart_done": value => 'true';
+                }
+                ##
+                # Find out the next node to be updated?
+                ##
             }
-            service { "ceph-mon":
-                ensure => running,
-            }
-            exec {"/usr/bin/ls": #/path/to/mon/quorum/check
-#                notify => to_upgrade_consul_mon_restart_done
-            }
+        } else {
+            notify{"Planned ceph upgrade is $ceph_upgrade_date , today is $today":}
         }
+
     notify{'this works':}
-   }else{
-    notify{'this fails':}
-   }
+    } else {
+        notify{'this fails':}
+    }
 }
+
+class {'rjil::ceph::upgrade': }
