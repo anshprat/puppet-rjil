@@ -27,10 +27,10 @@ class rjil::ceph::upgrade (
     ##
     if ($consulkv['gate_update_ceph_repo'] == 'True'){
         file {'delete_ceph_giant_repo':
-          path   => '/etc/apt/sources.list.d/ceph.list',
           ensure => absent,
+          path   => '/etc/apt/sources.list.d/ceph.list',
         }
-       apt::source { 'ceph_hammer_repo':
+        apt::source { 'ceph_hammer_repo':
           comment  => 'ceph hammer repo',
           location => 'http://ceph.com/',
           release  => 'debian-hammer',
@@ -40,26 +40,26 @@ class rjil::ceph::upgrade (
             'server' => 'keyserver.ubuntu.com',
           },
         }
-        exec { "/usr/bin/apt-get -y upgrade":
+        exec { '/usr/bin/apt-get -y upgrade':
           refreshonly => true,
-          subscribe => File["/etc/apt/sources.list.d/ceph_hammer_repo.list"],
-          timeout => 3600,
+          subscribe   => File['/etc/apt/sources.list.d/ceph_hammer_repo.list'],
+          timeout     => 3600,
         }
     }
 
         if (('stmonleader1' in $::hostname) and ($consulkv['mon_restart_done'] != 'True')){
-            file { "/tmp/mon_restart_lock.puppet":
-                notify  => Service["ceph-mon"],
+            file { '/tmp/mon_restart_lock.puppet':
+                notify  => Service['ceph-mon'],
             }
-            service { "ceph-mon":
+            service { 'ceph-mon':
                 ensure => running,
             }
-            exec {"/usr/bin/ls": #/path/to/mon/quorum/check
+            exec {'/usr/bin/ls': #/path/to/mon/quorum/check
 #                notify => to_upgrade_consul_mon_restart_done
             }
         }
     notify{'this works':}
-   }else{
-    notify{'this fails':}
-   }
+    }else{
+      notify{'this fails':}
+    }
 }
