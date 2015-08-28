@@ -1,13 +1,13 @@
 require 'spec_helper'
 require 'hiera-puppet-helper'
 
-describe 'rjil::ceph' do
+describe 'rjil::cephblk' do
 
   let :hiera_data do
     {
-      'rjil::ceph::fsid'                => '94d178a4-cae5-43fa-b420-8ae1cfedb7dc',
-      'rjil::ceph::storage_cluster_if'  => 'eth1',
-      'rjil::ceph::public_if'           => 'eth0',
+      'rjil::cephblk::fsid'                => '94d178a4-cae5-43fa-b420-8ae1cfedb7dc',
+      'rjil::cephblk::storage_cluster_if'  => 'eth1',
+      'rjil::cephblk::public_if'           => 'eth0',
     }
   end
 

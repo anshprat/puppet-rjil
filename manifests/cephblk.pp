@@ -1,5 +1,5 @@
 #
-# Class: rjil::ceph
+# Class: rjil::cephblk
 #  Install and configure ceph on both ceph clients and servers
 #
 # == Parameters
@@ -38,7 +38,7 @@
 #   Default: 3, and it should be 3 or more in production systems.
 #
 
-class rjil::ceph (
+class rjil::cephblk (
   $fsid,
   $keyring                = '/etc/ceph/keyring',
   $auth_type              = 'cephx',
@@ -50,10 +50,10 @@ class rjil::ceph (
   $pool_default_size      = 3
 ) {
 
-  anchor {'rjil::ceph::start':
+  anchor {'rjil::cephblk::start':
     before => Class['::ceph::conf']
   }
-  anchor {'rjil::ceph::end':
+  anchor {'rjil::cephblk::end':
     require => Class['::ceph::conf']
   }
 

@@ -87,7 +87,7 @@ class rjil::glance (
     include ::glance::backend::file
   } elsif($backend == 'rbd') {
     # Rbd backend
-    include rjil::ceph
+    include rjil::cephblk
     include rjil::ceph::mon_config
     ensure_resource('rjil::service_blocker', 'stmon', {})
     Rjil::Service_blocker['stmon'] -> Class['rjil::ceph::mon_config'] ->
