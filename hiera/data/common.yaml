@@ -644,6 +644,14 @@ rjil::system::apt::repositories:
     release: 'trusty-security'
     repos: 'main restricted universe multiverse'
     include_src: false
+  jenkins:
+    location: 'http://pkg.jenkins-ci.org/debian-stable'
+    release: 'binary/'
+    repos: ''
+    key: 'D50582E6'
+    key_source: 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key'
+    include_src: false
+
 
 
 ########################################
