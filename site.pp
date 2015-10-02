@@ -208,3 +208,7 @@ node /^vagrant\d+/ {
   include rjil::base
   include rjil::base::jiocloud::vagrant
 }
+
+node /^tools\d+/ {
+  include rjil::base
+}
