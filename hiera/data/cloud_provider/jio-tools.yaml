@@ -1,6 +1,6 @@
 rjil::jiocloud::consul::service::interval: "10s"
 
-rjil::system::apt::proxy: "http://10.140.192.34:3128/"
+rjil::system::apt::proxy: "http://10.140.218.59:3128/"
 
 public_address: "%{ipaddress_10_140_221_224_28}"
 public_interface: "%{interface_10_140_221_224_28}"
@@ -13,9 +13,9 @@ rjil::system::proxies:
   "no":
     url: "127.0.0.1,localhost,consul,jiocloud.com"
   http:
-    url: "http://10.140.192.34:3128/"
+    url: "http://10.140.218.59:3128/"
   https:
-    url: "http://10.140.192.34:3128/"
+    url: "http://10.140.218.59:3128/"
 
 rjil::system::accounts::active_users: [hkumar,jenkins,consul,anshup,amar,vpramo,akash,soren,bodepd,mayankkapoor]
 rjil::system::accounts::sudo_users:
@@ -74,3 +74,4 @@ rustedhalo:
       =iZW7
       -----END PGP PUBLIC KEY BLOCK-----
 
+rjil::jiocloud::consul::encrypt: "%{consul_gossip_encrypt}"
