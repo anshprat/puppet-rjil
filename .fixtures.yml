@@ -152,3 +152,6 @@ fixtures:
     mediawiki:
       repo: https://github.com/jiocloud/puppet-mediawiki
       ref: origin/master
+    omd:
+      repo: https://github.com/jiocloud/puppet-omd
+      ref: origin/master

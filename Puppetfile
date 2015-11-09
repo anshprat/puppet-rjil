@@ -219,3 +219,8 @@ mod 'danzilio/danzilio-virtualbox',
 mod 'hexmode/mediawiki',
   :git => "#{base_url}/jiocloud/puppet-mediawiki",
   :ref => 'master'
+
+mod 'fnerdwq/omd',
+  :git => "#{base_url}/jiocloud/puppet-omd",
+  :ref => 'master'
+

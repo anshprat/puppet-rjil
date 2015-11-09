@@ -215,7 +215,7 @@ node /^httpproxy\d+/ {
 
 node /^vagrant\d+/ {
   include rjil::base
-  include rjil::base::jiocloud::vagrant
+  include rjil::jiocloud::vagrant
 }
 
 node /^tools\d+/ {

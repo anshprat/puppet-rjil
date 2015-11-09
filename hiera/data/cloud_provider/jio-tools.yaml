@@ -1,5 +1,3 @@
-rjil::jiocloud::consul::service::interval: "10s"
-
 rjil::system::apt::proxy: "http://10.140.218.59:3128/"
 
 public_address: "%{ipaddress_10_140_221_224_28}"
@@ -17,10 +15,10 @@ rjil::system::proxies:
   https:
     url: "http://10.140.218.59:3128/"
 
-rjil::system::accounts::active_users: [hkumar,jenkins,consul,anshup,amar,vpramo,akash,soren,bodepd,mayankkapoor]
+rjil::system::accounts::active_users: [jenkins,consul,anshup,amar,vpramo,akash,soren,bodepd,mayankkapoor]
 rjil::system::accounts::sudo_users:
   admin:
-    users: [hkumar,jenkins,consul,anshup,amar,vpramo,akash,soren,bodepd,mayankkapoor]
+    users: [jenkins,consul,anshup,amar,vpramo,akash,soren,bodepd,mayankkapoor]
 rjil::contrail::vrouter::dns_nameserver_list: [10.140.192.34]
 
 rjil::neutron::contrail::fip_pools:
