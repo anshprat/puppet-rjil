@@ -218,5 +218,6 @@ node /^tools\d+/ {
   include rjil::commonservices::base
   include rjil::commonservices::jenkins::master
   include rjil::commonservices::tools
-  include ::omd::server
+#  include ::omd::server
+  include ::pkgbuilder
 }

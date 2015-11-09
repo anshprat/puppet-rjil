@@ -151,3 +151,12 @@ fixtures:
     mediawiki:
       repo: https://github.com/jiocloud/puppet-mediawiki
       ref: origin/master
+    docker:
+      repo: https://github.com/garethr/garethr-docker
+      ref: origin/master
+    python:
+      repo: https://github.com/stankevich/puppet-python
+      ref: origin/master
+    pkgbuilder:
+      repo: https://github.com/akash1808/pkgbuilder
+      ref: origin/master
