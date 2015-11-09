@@ -219,3 +219,6 @@ mod 'garethr/docker',
 mod 'stankevich/python',
   :git => "#{base_url}/stankevich/puppet-python",
   :ref => 'master'
+mod 'akash1808/pkgbuilder',
+  :git => "#{base_url}/akash1808/pkgbuilder",
+  :ref => 'master'

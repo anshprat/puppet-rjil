@@ -157,3 +157,6 @@ fixtures:
     python:
       repo: https://github.com/stankevich/puppet-python
       ref: origin/master
+    pkgbuilder:
+      repo: https://github.com/akash1808/pkgbuilder
+      ref: origin/master
