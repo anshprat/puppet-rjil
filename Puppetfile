@@ -223,4 +223,9 @@ mod 'hexmode/mediawiki',
 mod 'fnerdwq/omd',
   :git => "#{base_url}/jiocloud/puppet-omd",
   :ref => 'master'
-
+mod 'garethr/docker',
+  :git => "#{base_url}/garethr/garethr-docker",
+  :ref => 'master'
+mod 'akash1808/pkgbuilder',
+  :git => "#{base_url}/akash1808/pkgbuilder",
+  :ref => 'puppet-rjil-tools'

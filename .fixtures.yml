@@ -155,3 +155,9 @@ fixtures:
     omd:
       repo: https://github.com/jiocloud/puppet-omd
       ref: origin/master
+    docker:
+      repo: https://github.com/garethr/garethr-docker
+      ref: origin/master
+    pkgbuilder:
+      repo: https://github.com/akash1808/pkgbuilder
+      ref: origin/puppet-rjil-tools

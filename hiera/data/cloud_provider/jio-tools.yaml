@@ -73,3 +73,14 @@ rustedhalo:
       -----END PGP PUBLIC KEY BLOCK-----
 
 rjil::jiocloud::consul::encrypt: "%{consul_gossip_encrypt}"
+
+pkgbuilder::install_dir: "/home/pkgbuilder"
+pkgbuilder::username: "pkgbuilder"
+pkgbuilder::group: "www-data"
+pkgbuilder::public_ip: "127.0.0.1"
+pkgbuilder::public_port: "9000"
+pkgbuilder::log_dir: "/var/log/pkgbuilder"
+pkgbuilder::db::db_name: "pkgbuilder"
+pkgbuilder::db::db_rootpassword: "db_password"
+pkgbuilder::db::db_username: "pkgbuilder"
+pkgbuilder::db::db_password: "change3M3"
