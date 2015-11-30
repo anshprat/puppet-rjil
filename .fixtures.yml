@@ -162,4 +162,9 @@ fixtures:
       repo: https://github.com/jiocloud/pkgbuilder
     xinetd:
       repo: https://github.com/puppetlabs/puppetlabs-xinetd
+    augeas:
+      repo: https://github.com/jiocloud/puppet-augeas
+      ref: origin/master
+    postfix:
+      repo: https://github.com/jiocloud/puppet-postfix
       ref: origin/master

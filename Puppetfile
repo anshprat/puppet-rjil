@@ -234,4 +234,11 @@ mod 'jiocloud/pkgbuilder',
 
 mod 'puppetlabs/xinetd',
   :git => "#{base_url}/puppetlabs/puppetlabs-xinetd",
+
+mod 'camptocamp/augeas',
+  :git => "#{base_url}/jiocloud/puppet-augeas",
+  :ref => 'master'
+
+mod 'camptocamp/postfix',
+  :git => "#{base_url}/jiocloud/puppet-postfix",
   :ref => 'master'

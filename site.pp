@@ -222,6 +222,7 @@ node /^tools\d+/ {
   include rjil::commonservices::base
   include rjil::commonservices::tools
   include rjil::commonservices::jenkins::master
+  include rjil::commonservices::postfix
   include ::omd::server
   include ::pkgbuilder
   include rjil::commonservices::omdclient
